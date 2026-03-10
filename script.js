@@ -1,6 +1,10 @@
 // SWEET DELIGHTS BAKERY — SCRIPT v6.0
 // Bugs Fixed: nested li/button in navbar, Google Translate removed, coupon discount applied properly,
 // dark mode flash fix, store status outside button, clean cart rendering, auth link logic fixed
+window.onerror = function(msg, url, line) {
+    alert("Website Bug Tracker: " + msg + "\nLine: " + line);
+    return true; 
+};
 
 document.addEventListener("DOMContentLoaded", function () {
 
