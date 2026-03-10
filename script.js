@@ -379,6 +379,124 @@ document.addEventListener("DOMContentLoaded", function () {
             if (cart.length === 0) { showToast('Your tray is empty! Add some treats first.', 'error'); return; }
             const total = document.getElementById('tray-total-price')?.textContent || '$0.00';
             if (payAmountSpan) payAmountSpan.textContent = total;
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const payBtn = document.getElementById('pay-now-btn');
+            const customerName = document.getElementById('cc-name').value || 'Valued Customer';
+            const originalText = payBtn.innerHTML;
+
+            try {
+                // Code yahan se secure ho gaya hai
+                payBtn.innerHTML = 'Processing... ⌛';
+                payBtn.style.backgroundColor = '#e67e22';
+                payBtn.style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    const orderTypeEl = document.querySelector('input[name="orderType"]:checked');
+                    const isDelivery = orderTypeEl ? orderTypeEl.value === 'delivery' : false;
+                    const addressEl = document.getElementById('delivery-address');
+                    const address = isDelivery ? (addressEl?.value || '') : 'Store Pickup';
+                    
+                    const isScheduled = document.getElementById('schedule-checkbox')?.checked;
+                    const schedDate = document.getElementById('schedule-date')?.value || '';
+                    const schedTime = document.getElementById('schedule-time')?.value || '';
+
+                    const baseTotalEl = document.getElementById('tray-total-price');
+                    const baseTotal = parseFloat(baseTotalEl?.textContent.replace('$', '') || 0);
+                    const deliveryFee = isDelivery ? 5.00 : 0;
+                    const grandTotal = (baseTotal + deliveryFee).toFixed(2);
+
+                    let orderDateText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    let isPreOrder = false;
+                    if (isScheduled && schedDate && schedTime) {
+                        orderDateText = `Pre-Order: ${schedDate} at ${schedTime}`;
+                        isPreOrder = true;
+                    }
+
+                    const currentUserInfo = JSON.parse(localStorage.getItem('bakeryCurrentUser'));
+                    const newOrder = {
+                        id: 'SD-' + Math.floor(Math.random() * 90000 + 10000),
+                        customerName,
+                        customerEmail: currentUserInfo?.email || '',
+                        date: orderDateText,
+                        isPreOrder,
+                        orderType: isDelivery ? 'Delivery' : 'Pickup',
+                        address,
+                        items: [...cart],
+                        total: '$' + grandTotal,
+                        status: 1
+                    };
+
+                    // Email notification
+                    let orderMessage = `NEW ORDER!\nCustomer: ${customerName}\nOrder ID: ${newOrder.id}\nType: ${newOrder.orderType}\n`;
+                    newOrder.items.forEach(item => { orderMessage += `- ${item.name} (${item.price})\n`; });
+                    fetch('https://formspree.io/f/xvzwzlln', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ Subject: 'New Bakery Order!', Customer: customerName, Info: orderMessage })
+                    }).catch(() => {});
+
+                    // Save order
+                    const orderHistory = JSON.parse(localStorage.getItem('bakeryOrders')) || [];
+                    orderHistory.unshift(newOrder);
+                    localStorage.setItem('bakeryOrders', JSON.stringify(orderHistory));
+
+                    // Loyalty points logic
+                    const currentUser = JSON.parse(localStorage.getItem('bakeryCurrentUser'));
+                    if (currentUser) {
+                        const pointsEarned = Math.floor(parseFloat(grandTotal));
+                        currentUser.loyaltyPoints = (currentUser.loyaltyPoints || 0) + pointsEarned;
+                        localStorage.setItem('bakeryCurrentUser', JSON.stringify(currentUser));
+                        
+                        const users = JSON.parse(localStorage.getItem('bakeryUsers')) || [];
+                        const userIndex = users.findIndex(u => u.email === currentUser.email);
+                        if (userIndex >= 0) { 
+                            users[userIndex].loyaltyPoints = currentUser.loyaltyPoints; 
+                            localStorage.setItem('bakeryUsers', JSON.stringify(users)); 
+                        }
+                        if (typeof showToast === 'function') showToast(`+${pointsEarned} Loyalty Points earned! 🌟`, 'success');
+                    }
+
+                    cart = [];
+                    localStorage.setItem('bakeryCart', JSON.stringify(cart));
+                    if (typeof renderCart === 'function') renderCart();
+
+                    payBtn.innerHTML = '✨ Payment Successful!';
+                    payBtn.style.backgroundColor = '#27ae60';
+
+                    if (typeof confetti === 'function') {
+                        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 3000000 });
+                    }
+
+                    setTimeout(() => {
+                        const checkoutModalEl = document.getElementById('checkout-modal');
+                        if (checkoutModalEl) checkoutModalEl.classList.remove('active');
+                        
+                        payBtn.innerHTML = originalText;
+                        payBtn.style.backgroundColor = '';
+                        payBtn.style.pointerEvents = 'auto';
+                        
+                        if (typeof closeTray === 'function') closeTray();
+                        if (paymentForm) paymentForm.reset();
+                        if (typeof showToast === 'function') showToast('Order placed successfully! 🍰', 'success');
+                        
+                        setTimeout(() => { window.location.href = 'orders.html'; }, 1500);
+                    }, 2200);
+
+                }, 2000);
+                
+            } catch (error) {
+                // Agar GitHub server par koi bhi code fail hua, toh website crash nahi hogi
+                // Balke aapko screen par error message dikh jayega.
+                alert("Order Error: " + error.message);
+                console.error(error);
+                payBtn.innerHTML = "Error! Try Again";
+                payBtn.style.backgroundColor = "#e74c3c";
+                payBtn.style.pointerEvents = "auto";
+            }
+        });
+    }
             checkoutModal.classList.add('active');
         });
     }
@@ -404,100 +522,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    if (paymentForm) {
-        paymentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const payBtn = document.getElementById('pay-now-btn');
-            const customerName = document.getElementById('cc-name')?.value || 'Valued Customer';
-            const originalText = payBtn.innerHTML;
 
-            payBtn.innerHTML = 'Processing... ⌛';
-            payBtn.style.backgroundColor = '#e67e22';
-            payBtn.style.pointerEvents = 'none';
-
-            setTimeout(() => {
-                const orderTypeEl = document.querySelector('input[name="orderType"]:checked');
-                const isDelivery = orderTypeEl?.value === 'delivery';
-                const address = isDelivery ? (document.getElementById('delivery-address')?.value || '') : 'Store Pickup';
-                const isScheduled = document.getElementById('schedule-checkbox')?.checked;
-                const schedDate = document.getElementById('schedule-date')?.value || '';
-                const schedTime = document.getElementById('schedule-time')?.value || '';
-
-                const baseTotal = parseFloat(document.getElementById('tray-total-price')?.textContent.replace('$', '') || '0');
-                const deliveryFee = isDelivery ? 5.00 : 0;
-                const grandTotal = (baseTotal + deliveryFee).toFixed(2);
-
-                let orderDateText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                let isPreOrder = false;
-                if (isScheduled && schedDate && schedTime) {
-                    orderDateText = `Pre-Order: ${schedDate} at ${schedTime}`;
-                    isPreOrder = true;
-                }
-
-                const newOrder = {
-                    id: 'SD-' + Math.floor(Math.random() * 90000 + 10000),
-                    customerName,
-                    customerEmail: JSON.parse(localStorage.getItem('bakeryCurrentUser'))?.email || '',
-                    date: orderDateText,
-                    isPreOrder,
-                    orderType: isDelivery ? 'Delivery' : 'Pickup',
-                    address,
-                    items: [...cart],
-                    total: '$' + grandTotal,
-                    status: 1
-                };
-
-                // Email notification (non-blocking)
-                let orderMessage = `NEW ORDER!\n\nCustomer: ${customerName}\nOrder ID: ${newOrder.id}\nType: ${newOrder.orderType}\nAddress: ${address}\nTotal: $${grandTotal}\n\nItems:\n`;
-                newOrder.items.forEach(item => { orderMessage += `- ${item.name} (${item.price})\n`; });
-                fetch('https://formspree.io/f/xvzwzlln', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ Subject: 'New Bakery Order!', Customer: customerName, Info: orderMessage })
-                }).catch(() => {});
-
-                // Save order & update loyalty points
-                const orderHistory = JSON.parse(localStorage.getItem('bakeryOrders')) || [];
-                orderHistory.unshift(newOrder);
-                localStorage.setItem('bakeryOrders', JSON.stringify(orderHistory));
-
-                // Loyalty points
-                const currentUser = JSON.parse(localStorage.getItem('bakeryCurrentUser'));
-                if (currentUser) {
-                    const pointsEarned = Math.floor(parseFloat(grandTotal));
-                    currentUser.loyaltyPoints = (currentUser.loyaltyPoints || 0) + pointsEarned;
-                    localStorage.setItem('bakeryCurrentUser', JSON.stringify(currentUser));
-                    const users = JSON.parse(localStorage.getItem('bakeryUsers')) || [];
-                    const userIndex = users.findIndex(u => u.email === currentUser.email);
-                    if (userIndex >= 0) { users[userIndex].loyaltyPoints = currentUser.loyaltyPoints; localStorage.setItem('bakeryUsers', JSON.stringify(users)); }
-                    showToast(`+${pointsEarned} Loyalty Points earned! 🌟`, 'success');
-                }
-
-                cart = [];
-                discountPercent = 0;
-                localStorage.setItem('bakeryCart', JSON.stringify(cart));
-                renderCart();
-
-                payBtn.innerHTML = '🎉 Payment Successful!';
-                payBtn.style.backgroundColor = '#27ae60';
-
-                if (typeof confetti === 'function') {
-                    confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 }, zIndex: 3000000 });
-                }
-
-                setTimeout(() => {
-                    checkoutModal.classList.remove('active');
-                    payBtn.innerHTML = originalText;
-                    payBtn.style.backgroundColor = '';
-                    payBtn.style.pointerEvents = 'auto';
-                    closeTray();
-                    paymentForm.reset();
-                    showToast('Order placed successfully! 🎂', 'success');
-                    setTimeout(() => { window.location.href = 'orders.html'; }, 1500);
-                }, 2200);
-            }, 2000);
-        });
-    }
 
     // ==========================================================================
     // 11. LIGHTBOX
