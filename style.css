@@ -249,6 +249,48 @@ h1, h2, h3, h4, .logo {
 .team-card h4 { margin: 0 0 5px; font-size: 1.05rem; }
 .team-card span { font-size: 0.82rem; color: var(--primary); font-weight: 600; }
 
+/* ──────────────── EXPERIENCE STRIP ──────────────── */
+.experience-strip {
+    padding: 26px 48px 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.xp-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+.xp-label { margin: 0; color: var(--text-muted); font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+.xp-value { margin: 8px 0 4px; color: var(--primary); font-size: 2rem; font-family: 'Cormorant Garamond', serif; font-weight: 700; }
+.xp-card small { color: var(--text-muted); }
+
+/* ──────────────── RECOMMEND SECTION ──────────────── */
+.recommend-section { padding: 74px 48px 20px; text-align: center; }
+.recommend-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+.recommend-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+}
+.recommend-card h4 { margin: 12px 0 8px; font-size: 1.25rem; }
+.recommend-emoji { font-size: 2rem; }
+.recommend-card p { margin: 0 0 12px; color: var(--text-muted); font-size: 0.92rem; }
+.recommend-card .btn { margin-top: 0; width: 100%; }
+
 /* ──────────────── MENU SECTION ──────────────── */
 .menu-section { padding: 100px 48px; text-align: center; }
 .menu-section > h2 { font-size: 2.6rem; color: var(--text-dark); margin-bottom: 10px; }
@@ -746,6 +788,8 @@ body.dark-mode .rct-row strong { color: #f5ede4; }
     .about-values { padding: 60px 22px; }
     .team-section { padding: 60px 22px; }
     .navbar.scrolled { padding: 12px 20px; }
+    .experience-strip { grid-template-columns: 1fr; padding: 16px 20px 0; }
+    .recommend-section { padding: 56px 20px 10px; }
 }
 @media (max-width: 480px) {
     .navbar { padding: 14px 16px; }

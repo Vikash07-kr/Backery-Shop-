@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rewards Club | Sweet Delights</title>
+  <meta name="description" content="Earn bakery points and redeem free treats.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-fade-in">
+  <nav class="navbar glass-nav">
+    <h1 class="logo">Sweet Delights</h1>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catering.html">Catering</a></li>
+      <li><a href="rewards.html" class="active">Rewards</a></li>
+      <li><a href="wishlist.html">Wishlist</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="#" id="auth-nav-link" class="nav-pill">👤 Login</a></li>
+      <li><button id="theme-toggle" class="theme-btn">🌙</button></li>
+    </ul>
+  </nav>
+
+  <header class="hero about-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Sweet Circle</div>
+      <h2>Earn points,<br>unlock free treats</h2>
+      <p>Get 1 point for every $1 spent. Redeem points for handcrafted bakery rewards.</p>
+      <a class="btn" href="#reward-calc">Check your rewards value</a>
+    </div>
+  </header>
+
+  <section class="stats-strip">
+    <div class="stat-item"><span class="num">1x</span><span class="label">Points per $1</span></div>
+    <div class="stat-item"><span class="num">250</span><span class="label">Free pastry</span></div>
+    <div class="stat-item"><span class="num">600</span><span class="label">Free cake slice</span></div>
+  </section>
+
+  <section class="menu-section" id="reward-calc">
+    <h2>Rewards Estimator</h2>
+    <p class="section-subtitle">See what your next order can unlock.</p>
+    <div class="feedback-container" style="max-width:560px;">
+      <label for="reward-spend" style="display:block;text-align:left;margin-bottom:8px;color:var(--text-muted);">Estimated monthly spend ($)</label>
+      <input id="reward-spend" type="number" min="0" step="1" placeholder="e.g. 120" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border-subtle);margin-bottom:12px;">
+      <button class="btn" id="calculate-rewards" style="width:100%;margin-top:0;">Calculate Rewards</button>
+      <div id="reward-result" style="margin-top:16px;color:var(--text-muted);"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <h3>Sweet Delights Bakery</h3>
+    <div class="footer-links"><a href="index.html">Home</a><a href="catering.html">Catering</a><a href="rewards.html">Rewards</a></div>
+    <p style="margin-top:20px;font-size:0.78rem;opacity:0.4;">&copy; <span id="current-year"></span> Sweet Delights Bakery.</p>
+  </footer>
+
+  <div id="auth-modal" class="modal-overlay">
+    <div class="checkout-card">
+      <span class="close-modal" id="close-auth">&times;</span>
+      <h3 id="auth-title" style="color:var(--primary);margin-top:0;font-size:1.6rem;">Welcome Back! 👋</h3>
+      <form id="auth-form" class="custom-form">
+        <div class="input-group" id="name-group" style="display:none;"><input type="text" id="auth-name" placeholder=" "><label for="auth-name">Full Name</label></div>
+        <div class="input-group"><input type="email" id="auth-email" required placeholder=" "><label for="auth-email">Email Address</label></div>
+        <div class="input-group"><input type="password" id="auth-pass" required placeholder=" "><label for="auth-pass">Password</label></div>
+        <button type="submit" class="btn ripple" style="width:100%;margin-top:0;">Submit</button>
+        <p style="margin-top:16px;font-size:0.88rem;color:var(--text-muted);cursor:pointer;text-align:center;" id="toggle-auth">Don't have an account? Sign up</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

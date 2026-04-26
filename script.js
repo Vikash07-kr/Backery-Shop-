@@ -865,6 +865,98 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ==========================================================================
+    // 21.5 SMART RECOMMENDATIONS + LIVE BATCH TIMER + NEWSLETTER
+    // ==========================================================================
+    const recommendContainer = document.getElementById('smart-recommendations');
+    const recommendationPool = [
+        { name: 'Salted Caramel Éclair', price: '$5.25', emoji: '🍮', bg: 'linear-gradient(135deg,#ffe5c4,#ffd6a5)', reason: 'Popular with croissant lovers' },
+        { name: 'Honey Oat Sourdough', price: '$7.80', emoji: '🍞', bg: 'linear-gradient(135deg,#efe0c8,#e5d0b0)', reason: 'Pairs with artisan coffee' },
+        { name: 'Pistachio Rose Tart', price: '$6.20', emoji: '🌹', bg: 'linear-gradient(135deg,#f8f3ff,#eaddff)', reason: 'Top pick this weekend' },
+        { name: 'Vanilla Bean Cold Brew', price: '$4.10', emoji: '🥤', bg: 'linear-gradient(135deg,#e5d3be,#ceb89e)', reason: 'Great add-on for dessert orders' }
+    ];
+
+    function addToTray(item) {
+        cart.push({ name: item.name, price: item.price, emoji: item.emoji, bg: item.bg });
+        safeStorage.setJSON('bakeryCart', cart);
+        renderCart();
+        if (trayBadge) {
+            trayBadge.classList.add('pop');
+            setTimeout(() => trayBadge.classList.remove('pop'), 260);
+        }
+    }
+
+    if (recommendContainer) {
+        const picks = recommendationPool.sort(() => 0.5 - Math.random()).slice(0, 3);
+        recommendContainer.innerHTML = '';
+        picks.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'recommend-card fade-up is-visible';
+            card.innerHTML = `
+                <div class="recommend-emoji" style="background:${item.bg};width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;">${item.emoji}</div>
+                <h4>${item.name}</h4>
+                <p>${item.reason}</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><strong>${item.price}</strong><small style="color:var(--text-muted);">Chef pick</small></div>
+                <button class="btn ripple">Add to Tray</button>`;
+            card.querySelector('button').addEventListener('click', () => {
+                addToTray(item);
+                showToast(`${item.name} added to tray!`, 'success');
+            });
+            recommendContainer.appendChild(card);
+        });
+    }
+
+    const timerEl = document.getElementById('next-batch-timer');
+    if (timerEl) {
+        const tickBatch = () => {
+            const now = new Date();
+            const next = new Date(now);
+            next.setMinutes(60, 0, 0);
+            const diff = Math.max(0, next - now);
+            const mins = String(Math.floor(diff / 60000)).padStart(2, '0');
+            const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+            timerEl.textContent = `${mins}:${secs}`;
+        };
+        tickBatch();
+        setInterval(tickBatch, 1000);
+    }
+
+    const newsletterForm = document.getElementById('newsletter-form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById('news-email');
+            const value = emailInput?.value?.trim();
+            if (!value) return;
+            const list = safeStorage.getJSON('bakeryNewsletter', []);
+            if (!list.includes(value.toLowerCase())) {
+                list.push(value.toLowerCase());
+                safeStorage.setJSON('bakeryNewsletter', list);
+                showToast('Subscribed! Exclusive offers unlocked ✨', 'success');
+            } else {
+                showToast('You are already subscribed 💌', 'info');
+            }
+            newsletterForm.reset();
+        });
+    }
+
+    const calcRewardsBtn = document.getElementById('calculate-rewards');
+    if (calcRewardsBtn) {
+        calcRewardsBtn.addEventListener('click', () => {
+            const spend = parseFloat(document.getElementById('reward-spend')?.value || '0');
+            const result = document.getElementById('reward-result');
+            if (!result) return;
+            if (spend <= 0) {
+                result.innerHTML = '<span style="color:#e74c3c;">Enter a valid amount to estimate rewards.</span>';
+                return;
+            }
+            const points = Math.round(spend);
+            const pastryCount = Math.floor(points / 250);
+            const cakeSlices = Math.floor(points / 600);
+            result.innerHTML = `You will earn <strong style="color:var(--primary);">${points} points</strong>. That's enough for <strong>${pastryCount}</strong> free pastry reward(s) or <strong>${cakeSlices}</strong> cake slice reward(s).`;
+        });
+    }
+
+    // ==========================================================================
     // 22. DELIVERY FEE LOGIC
     // ==========================================================================
     const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');

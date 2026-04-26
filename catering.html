@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catering & Events | Sweet Delights</title>
+  <meta name="description" content="Premium bakery catering for weddings, offices, and events.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-fade-in">
+  <nav class="navbar glass-nav">
+    <h1 class="logo">Sweet Delights</h1>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catering.html" class="active">Catering</a></li>
+      <li><a href="rewards.html">Rewards</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="#" id="auth-nav-link" class="nav-pill">👤 Login</a></li>
+      <li><button id="theme-toggle" class="theme-btn">🌙</button></li>
+    </ul>
+  </nav>
+
+  <header class="hero about-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Enterprise & Events</div>
+      <h2>Catering that impresses<br>every guest</h2>
+      <p>From boardrooms to weddings, we craft memorable dessert experiences with on-time service.</p>
+      <div class="hero-buttons">
+        <a class="btn" href="contact.html">Book Consultation</a>
+        <a class="btn btn-outline" href="#packages">View Packages</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="packages" class="menu-section">
+    <h2>Event Packages</h2>
+    <p class="section-subtitle">Flexible packages for every occasion.</p>
+    <div class="values-grid">
+      <article class="value-card"><span class="icon">🏢</span><h4>Corporate Daily</h4><p>Breakfast pastries + coffee station for teams of 10-200.</p></article>
+      <article class="value-card"><span class="icon">💍</span><h4>Wedding Dessert Table</h4><p>Tiered cakes, macarons, mini tarts and on-site display setup.</p></article>
+      <article class="value-card"><span class="icon">🎉</span><h4>Party Combo</h4><p>Custom themed cupcakes, brownies, and celebratory add-ons.</p></article>
+      <article class="value-card"><span class="icon">🎓</span><h4>Campus & School</h4><p>Affordable treats, allergy-safe options, and bulk pricing.</p></article>
+    </div>
+  </section>
+
+  <section class="about-values">
+    <h2>Why brands choose us</h2>
+    <div class="values-grid">
+      <div class="value-card"><span class="icon">⏱️</span><h4>On-time SLA</h4><p>Reliable delivery windows with proactive live updates.</p></div>
+      <div class="value-card"><span class="icon">🧾</span><h4>Easy invoicing</h4><p>Business invoices, monthly billing, and procurement support.</p></div>
+      <div class="value-card"><span class="icon">🥗</span><h4>Dietary options</h4><p>Vegan, gluten-friendly, eggless and no-nut menu options.</p></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <h3>Sweet Delights Bakery</h3>
+    <div class="footer-links">
+      <a href="index.html">Home</a><a href="catering.html">Catering</a><a href="rewards.html">Rewards</a><a href="contact.html">Contact</a>
+    </div>
+    <p style="margin-top:20px;font-size:0.78rem;opacity:0.4;">&copy; <span id="current-year"></span> Sweet Delights Bakery.</p>
+  </footer>
+
+  <div id="auth-modal" class="modal-overlay">
+    <div class="checkout-card">
+      <span class="close-modal" id="close-auth">&times;</span>
+      <h3 id="auth-title" style="color:var(--primary);margin-top:0;font-size:1.6rem;">Welcome Back! 👋</h3>
+      <form id="auth-form" class="custom-form">
+        <div class="input-group" id="name-group" style="display:none;"><input type="text" id="auth-name" placeholder=" "><label for="auth-name">Full Name</label></div>
+        <div class="input-group"><input type="email" id="auth-email" required placeholder=" "><label for="auth-email">Email Address</label></div>
+        <div class="input-group"><input type="password" id="auth-pass" required placeholder=" "><label for="auth-pass">Password</label></div>
+        <button type="submit" class="btn ripple" style="width:100%;margin-top:0;">Submit</button>
+        <p style="margin-top:16px;font-size:0.88rem;color:var(--text-muted);cursor:pointer;text-align:center;" id="toggle-auth">Don't have an account? Sign up</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
